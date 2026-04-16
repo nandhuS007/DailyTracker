@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { auth, signInWithGoogle, logout } from '@/lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { LogIn, LogOut, LayoutDashboard, History as HistoryIcon, PlusCircle, BookOpen, Zap, Brain, Settings as SettingsIcon } from 'lucide-react';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
