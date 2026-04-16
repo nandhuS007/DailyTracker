@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { auth, signInWithGoogle, logout } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { Button } from './components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogIn, LogOut, LayoutDashboard, History as HistoryIcon, PlusCircle, BookOpen, Zap, Brain, Settings as SettingsIcon } from 'lucide-react';
-import { Toaster } from './components/ui/sonner';
+import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import Coach from './components/Coach/Coach';
 import History from './components/History/History';
 import Dashboard from './components/Dashboard/Dashboard';
@@ -166,6 +167,7 @@ export default function App() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <div className="hidden md:flex flex-col items-end">
               <span className="text-sm font-medium text-zinc-900">{user.displayName}</span>
               <span className="text-xs text-zinc-500">{user.email}</span>

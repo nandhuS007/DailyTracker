@@ -3,12 +3,13 @@ import { User } from 'firebase/auth';
 import { db } from '../../lib/firebase';
 import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { DailyEntry } from '../../types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Progress } from '../ui/progress';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { format, subDays, isSameDay } from 'date-fns';
-import { PlusCircle, TrendingUp, Calendar, CheckCircle2, Star, Zap, Brain, Lightbulb } from 'lucide-react';
+import { PlusCircle, TrendingUp, Calendar, CheckCircle2, Star, Zap, Brain, Lightbulb, BarChart3 } from 'lucide-react';
+import WeeklyReport from './WeeklyReport';
 
 interface DashboardProps {
   user: User;
@@ -18,6 +19,7 @@ interface DashboardProps {
 export default function Dashboard({ user, onStartNew }: DashboardProps) {
   const [recentEntries, setRecentEntries] = useState<DailyEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<'daily' | 'weekly'>('daily');
 
   useEffect(() => {
     const q = query(
@@ -64,18 +66,42 @@ export default function Dashboard({ user, onStartNew }: DashboardProps) {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">Welcome back, {user.displayName?.split(' ')[0]}</h1>
-          <p className="text-zinc-500">Here's your accountability overview for the last 7 days.</p>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Welcome back, {user.displayName?.split(' ')[0]}</h1>
+          <p className="text-zinc-500 dark:text-zinc-400">Here's your accountability overview for the last 7 days.</p>
         </div>
-        {!todayEntry && (
-          <Button onClick={onStartNew} size="lg" className="shadow-lg shadow-zinc-200">
-            <PlusCircle className="mr-2 w-5 h-5" />
-            Complete Today's Entry
-          </Button>
-        )}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg">
+            <Button 
+              variant={view === 'daily' ? 'secondary' : 'ghost'} 
+              size="sm" 
+              onClick={() => setView('daily')}
+              className="h-8 text-xs"
+            >
+              Daily
+            </Button>
+            <Button 
+              variant={view === 'weekly' ? 'secondary' : 'ghost'} 
+              size="sm" 
+              onClick={() => setView('weekly')}
+              className="h-8 text-xs"
+            >
+              Weekly
+            </Button>
+          </div>
+          {!todayEntry && (
+            <Button onClick={onStartNew} size="lg" className="shadow-lg shadow-zinc-200 dark:shadow-none">
+              <PlusCircle className="mr-2 w-5 h-5" />
+              Complete Today's Entry
+            </Button>
+          )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {view === 'weekly' ? (
+        <WeeklyReport user={user} />
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="border-zinc-200 shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2 uppercase tracking-wider text-[10px] font-bold">
@@ -257,6 +283,8 @@ export default function Dashboard({ user, onStartNew }: DashboardProps) {
           </Card>
         </div>
       </section>
-    </div>
+      </>
+    )}
+  </div>
   );
 }
