@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
-import { auth, signInWithGoogle, logout } from './lib/firebase';
+import { auth, signInWithGoogle, logout } from '@/lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { LogIn, LogOut, LayoutDashboard, History as HistoryIcon, PlusCircle, BookOpen, Zap, Brain, Settings as SettingsIcon } from 'lucide-react';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import Coach from './components/Coach/Coach';
-import History from './components/History/History';
-import Dashboard from './components/Dashboard/Dashboard';
-import Study from './components/Study/Study';
-import HabitTracker from './components/Habits/HabitTracker';
-import CoachChat from './components/Coach/CoachChat';
-import Settings from './components/Settings/Settings';
-import { useNotifications } from './hooks/useNotifications';
+import Coach from '@/components/Coach/Coach';
+import History from '@/components/History/History';
+import Dashboard from '@/components/Dashboard/Dashboard';
+import Study from '@/components/Study/Study';
+import HabitTracker from '@/components/Habits/HabitTracker';
+import CoachChat from '@/components/Coach/CoachChat';
+import Settings from '@/components/Settings/Settings';
+import { useNotifications } from '@/hooks/useNotifications';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);

@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { User } from 'firebase/auth';
-import { db } from '../../lib/firebase';
+import { db } from '@/lib/firebase';
 import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { DailyEntry } from '../../types';
-import { getCoachAdvice } from '../../services/gemini';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { DailyEntry } from '@/types';
+import { getCoachAdvice } from '@/services/gemini';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';

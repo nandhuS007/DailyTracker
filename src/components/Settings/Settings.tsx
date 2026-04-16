@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
-import { db } from '../../lib/firebase';
+import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { UserProfile, UserSettings } from '../../types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { UserProfile, UserSettings } from '@/types';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
