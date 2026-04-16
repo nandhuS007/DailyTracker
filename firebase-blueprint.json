@@ -1,0 +1,102 @@
+{
+  "entities": {
+    "DailyEntry": {
+      "title": "Daily Entry",
+      "description": "A user's daily accountability check-in",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "mood": { "type": "number" },
+        "priorities": { "type": "array", "items": { "type": "string" } },
+        "accomplishments": { "type": "string" },
+        "habits": {
+          "type": "object",
+          "properties": {
+            "exercise": { "type": "boolean" },
+            "focusedWork": { "type": "boolean" },
+            "healthyEating": { "type": "boolean" },
+            "goodSleep": { "type": "boolean" }
+          }
+        },
+        "distraction": { "type": "string" },
+        "learned": { "type": "string" },
+        "wentWell": { "type": "string" },
+        "improvement": { "type": "string" },
+        "gratitude": { "type": "array", "items": { "type": "string" } },
+        "analysis": {
+          "type": "object",
+          "properties": {
+            "summary": { "type": "string" },
+            "pattern": { "type": "string" },
+            "actionableStep": { "type": "string" }
+          }
+        },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "date", "mood", "timestamp"]
+    },
+    "StudySession": {
+      "title": "Study Session",
+      "description": "A record of a study session",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "subject": { "type": "string" },
+        "duration": { "type": "number" },
+        "notes": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "subject", "timestamp"]
+    },
+    "Habit": {
+      "title": "Habit",
+      "description": "A custom habit to track",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "completedDates": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile and settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "dailyReminders": { "type": "boolean" },
+            "reminderTime": { "type": "string" }
+          }
+        }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "/entries/{entryId}": {
+      "schema": "DailyEntry",
+      "description": "Collection of daily entries"
+    },
+    "/studySessions/{sessionId}": {
+      "schema": "StudySession",
+      "description": "Collection of study sessions"
+    },
+    "/habits/{habitId}": {
+      "schema": "Habit",
+      "description": "Collection of custom habits"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile and settings"
+    }
+  }
+}

@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: entries
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (required, immutable) - The UID of the owner
+    //   - date: string (required) - ISO date string
+    //   - mood: number (required, 1-10)
+    //   - priorities: list of strings
+    //   - accomplishments: string
+    //   - habits: map (exercise, focusedWork, healthyEating, goodSleep: bool)
+    //   - distraction: string
+    //   - learned: string
+    //   - wentWell: string
+    //   - improvement: string
+    //   - gratitude: list of strings
+    //   - analysis: map (summary, pattern, actionableStep: string)
+    //   - timestamp: timestamp (required, immutable)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "johnskeltron@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidEntry(data) {
+      return data.userId is string && data.userId.size() < 128 &&
+             data.date is string && data.date.size() == 10 &&
+             data.mood is number && data.mood >= 1 && data.mood <= 10 &&
+             data.priorities is list && data.priorities.size() <= 10 &&
+             data.accomplishments is string && data.accomplishments.size() < 5000 &&
+             data.habits is map &&
+             data.distraction is string && data.distraction.size() < 1000 &&
+             data.learned is string && data.learned.size() < 1000 &&
+             data.wentWell is string && data.wentWell.size() < 2000 &&
+             data.improvement is string && data.improvement.size() < 2000 &&
+             data.gratitude is list && data.gratitude.size() <= 10 &&
+             data.timestamp is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['uid', 'email', 'displayName', 'settings']) &&
+             data.uid == request.auth.uid &&
+             (!('settings' in data) || (
+               data.settings is map &&
+               (!('dailyReminders' in data.settings) || data.settings.dailyReminders is bool) &&
+               (!('reminderTime' in data.settings) || data.settings.reminderTime is string)
+             ));
+    }
+
+    match /entries/{entryId} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isOwner(request.resource.data.userId) && 
+                      isValidEntry(request.resource.data);
+      allow update: if (isDocOwner() || isAdmin()) && 
+                      isValidEntry(request.resource.data) &&
+                      request.resource.data.userId == resource.data.userId &&
+                      request.resource.data.timestamp == resource.data.timestamp;
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /studySessions/{sessionId} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isOwner(request.resource.data.userId) &&
+                      request.resource.data.subject is string &&
+                      request.resource.data.subject.size() < 200;
+      allow update: if isDocOwner() &&
+                      request.resource.data.userId == resource.data.userId;
+      allow delete: if isDocOwner();
+    }
+
+    match /habits/{habitId} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isOwner(request.resource.data.userId) &&
+                      request.resource.data.name is string &&
+                      request.resource.data.name.size() < 100;
+      allow update: if isDocOwner() &&
+                      request.resource.data.userId == resource.data.userId;
+      allow delete: if isDocOwner();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) && isValidUser(request.resource.data);
+    }
+  }
+}
